@@ -1,0 +1,254 @@
+{
+  "project": {
+    "title": "期末專題：AI 專長適性分工與小組進度追蹤系統研究",
+    "course": "資訊管理專題實作 (第 04 組)",
+    "deadline": "2026-11-18",
+    "accessCode": "team2026",
+    "requirePasscode": false,
+    "updatedAt": "2026-11-04T11:58:26.095103"
+  },
+  "members": [
+    {
+      "id": "m1",
+      "name": "林宥辰",
+      "role": "組長 / 系統架構",
+      "avatarColor": "#2563eb",
+      "skills": [
+        "系統程式開發",
+        "API 串接",
+        "技術文件撰寫"
+      ],
+      "preferences": [
+        "系統程式開發",
+        "架構設計"
+      ],
+      "avoid": [
+        "美編排版"
+      ],
+      "capacityPoints": 60,
+      "note": "擅長前後端邏輯與系統整合，偏好負責核心功能實作"
+    },
+    {
+      "id": "m2",
+      "name": "陳語彤",
+      "role": "UI/UX 與前端設計",
+      "avatarColor": "#db2777",
+      "skills": [
+        "UI/UX 與視覺設計",
+        "響應式網頁排版",
+        "簡報製作與排版"
+      ],
+      "preferences": [
+        "UI/UX 與視覺設計",
+        "原型設計"
+      ],
+      "avoid": [
+        "資料庫正規化"
+      ],
+      "capacityPoints": 60,
+      "note": "重視使用者體驗與手機電腦雙端版面美感"
+    },
+    {
+      "id": "m3",
+      "name": "張哲瑋",
+      "role": "數據分析與演算法",
+      "avatarColor": "#059669",
+      "skills": [
+        "數據分析與圖表",
+        "AI 提示詞工程",
+        "問卷統計分析"
+      ],
+      "preferences": [
+        "數據分析與圖表",
+        "AI 提示詞工程"
+      ],
+      "avoid": [
+        "上台口頭報告"
+      ],
+      "capacityPoints": 60,
+      "note": "擅長量化指標設計與 AI 分工權重模型推導"
+    },
+    {
+      "id": "m4",
+      "name": "黃詩涵",
+      "role": "文獻研究與內容統整",
+      "avatarColor": "#d97706",
+      "skills": [
+        "資料蒐集與文獻整理",
+        "文案撰寫與統整",
+        "會議紀錄與進度追蹤"
+      ],
+      "preferences": [
+        "資料蒐集與文獻整理",
+        "文案撰寫與統整"
+      ],
+      "avoid": [
+        "系統程式開發"
+      ],
+      "capacityPoints": 60,
+      "note": "細心負責，擅長文獻探討、研究方法撰寫與報告文字潤飾"
+    },
+    {
+      "id": "m5",
+      "name": "周柏翰",
+      "role": "簡報展演與測試驗證",
+      "avatarColor": "#7c3aed",
+      "skills": [
+        "口頭報告與表達",
+        "簡報製作與排版",
+        "系統測試與除錯"
+      ],
+      "preferences": [
+        "口頭報告與表達",
+        "系統測試與除錯"
+      ],
+      "avoid": [
+        "文獻理論推導"
+      ],
+      "capacityPoints": 60,
+      "note": "台風穩健、邏輯清晰，負責專題發表與跨裝置實測驗證"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "國內外團隊協作與分工具文獻探討",
+      "description": "蒐集近五年同儕互評、社會賦閒效應（Social Loafing）與 AI 輔助任務分派之研究文獻並完成第二章草稿。",
+      "requiredSkills": [
+        "資料蒐集與文獻整理",
+        "文案撰寫與統整"
+      ],
+      "difficulty": "low",
+      "status": "done",
+      "progress": 100,
+      "dueDate": "2026-11-01",
+      "assigneeId": "m4",
+      "collaboratorIds": [],
+      "aiReason": "黃詩涵同時具備「資料蒐集與文獻整理」與「文案撰寫與統整」兩項核心專長，且完全符合個人偏好。"
+    },
+    {
+      "id": "t2",
+      "title": "專題研究架構與訪談問卷題目擬定",
+      "description": "整理大學生小組報告常見痛點，設計需求訪談大綱與前測問卷題項。",
+      "requiredSkills": [
+        "資料蒐集與文獻整理",
+        "問卷統計分析"
+      ],
+      "difficulty": "low",
+      "status": "done",
+      "progress": 100,
+      "dueDate": "2026-11-03",
+      "assigneeId": "m4",
+      "collaboratorIds": [
+        "m3"
+      ],
+      "aiReason": "由黃詩涵主責文獻與題項文字、張哲瑋協作統計量表設計，發揮跨專長互補。"
+    },
+    {
+      "id": "t3",
+      "title": "AI 專長適性配對與多維度貢獻權重模型設計",
+      "description": "設計結合難度權重（1x/2x/3x）、進度百分比與負載平衡之量化演算法與 AI Prompt 結構。",
+      "requiredSkills": [
+        "數據分析與圖表",
+        "AI 提示詞工程"
+      ],
+      "difficulty": "high",
+      "status": "in_progress",
+      "progress": 85,
+      "dueDate": "2026-11-06",
+      "assigneeId": "m3",
+      "collaboratorIds": [
+        "m1"
+      ],
+      "aiReason": "此為高難度核心任務（3x 權重），張哲瑋完全匹配「數據分析與圖表」及「AI 提示詞工程」專長與偏好。"
+    },
+    {
+      "id": "t4",
+      "title": "平台後端 API 與即時進度計算引擎開發",
+      "description": "實作組員管理、任務難度加權計算、AI 分工建議 API 與資料持久化儲存機制。",
+      "requiredSkills": [
+        "系統程式開發",
+        "API 串接"
+      ],
+      "difficulty": "high",
+      "status": "in_progress",
+      "progress": 80,
+      "dueDate": "2026-11-07",
+      "assigneeId": "m1",
+      "collaboratorIds": [],
+      "aiReason": "林宥辰具備「系統程式開發」與「API 串接」專長，承擔此 3x 高難度開發任務最為合適。"
+    },
+    {
+      "id": "t5",
+      "title": "響應式透明化進度看板與互動介面實作",
+      "description": "設計支援電腦與手機版的任務看板、貢獻度視覺化圖表與 AI 分工微調介面。",
+      "requiredSkills": [
+        "UI/UX 與視覺設計",
+        "響應式網頁排版"
+      ],
+      "difficulty": "high",
+      "status": "review",
+      "progress": 90,
+      "dueDate": "2026-11-05",
+      "assigneeId": "m2",
+      "collaboratorIds": [
+        "m1"
+      ],
+      "aiReason": "陳語彤專精於「UI/UX 與視覺設計」及「響應式網頁排版」，目前進度已達 90% 進入審閱階段。"
+    },
+    {
+      "id": "t6",
+      "title": "手機與電腦雙端可用性測試與問題修正紀錄",
+      "description": "針對不同螢幕尺寸驗證新增組員、AI 配對調整、滑桿更新進度等完整操作流程並撰寫測試報告。",
+      "requiredSkills": [
+        "系統測試與除錯",
+        "技術文件撰寫"
+      ],
+      "difficulty": "medium",
+      "status": "in_progress",
+      "progress": 60,
+      "dueDate": "2026-11-09",
+      "assigneeId": "m5",
+      "collaboratorIds": [
+        "m2"
+      ],
+      "aiReason": "周柏翰具備「系統測試與除錯」專長與偏好，搭配陳語彤協助檢視雙端介面細節。"
+    },
+    {
+      "id": "t7",
+      "title": "前測與後測使用者評估數據統計圖表繪製",
+      "description": "比較傳統件數計算與本平台加權透明看板對組員公平感認知之差異圖表。",
+      "requiredSkills": [
+        "數據分析與圖表",
+        "問卷統計分析"
+      ],
+      "difficulty": "medium",
+      "status": "todo",
+      "progress": 20,
+      "dueDate": "2026-11-11",
+      "assigneeId": "m3",
+      "collaboratorIds": [],
+      "aiReason": "與張哲瑋之統計分析專長高度契合，能在模型完成後無縫銜接圖表產出。"
+    },
+    {
+      "id": "t8",
+      "title": "期末專題成果簡報製作與口頭發表彩排",
+      "description": "統整問題意識、系統實機展示流程與量化成效，製作 15 分鐘發表簡報並進行 Q&A 演練。",
+      "requiredSkills": [
+        "簡報製作與排版",
+        "口頭報告與表達",
+        "文案撰寫與統整"
+      ],
+      "difficulty": "medium",
+      "status": "todo",
+      "progress": 15,
+      "dueDate": "2026-11-14",
+      "assigneeId": "m5",
+      "collaboratorIds": [
+        "m4",
+        "m2"
+      ],
+      "aiReason": "周柏翰具備「口頭報告與表達」及「簡報製作與排版」雙專長，結合黃詩涵與陳語彤共同完善。"
+    }
+  ]
+}
