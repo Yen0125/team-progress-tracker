@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>小組報告進度追蹤平台｜AI 專長適性分工 × 透明化多維度貢獻看板</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- Private Access Lock Screen (Shown only when passcode lock is enabled & not yet unlocked) -->
+  <div id="lockOverlay" class="lock-overlay" style="display: none;">
+    <div class="lock-card">
+      <div class="lock-badge">🔒 專題私人原型存取保護</div>
+      <h2 style="font-size: 1.25rem; margin-bottom: 8px;">小組報告進度追蹤平台</h2>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 18px;">
+        此原型為私人部署測試環境（不公開索引）。請輸入小組存取通行碼以進入操作。
+      </p>
+      <div class="form-group" style="text-align: left;">
+        <label class="form-label" for="passcodeInput">小組通行碼（預設：team2026）</label>
+        <input id="passcodeInput" type="password" class="form-input" placeholder="請輸入通行碼..." value="" />
+      </div>
+      <div id="lockErrorMsg" style="color: var(--danger); font-size: 0.8rem; margin-bottom: 10px; display: none;">
+        通行碼不正確，預設測試通行碼為 team2026
+      </div>
+      <button id="btnUnlock" class="btn btn-primary" style="width: 100%; padding: 10px;">
+        解鎖進入平台
+      </button>
+    </div>
+  </div>
+
+  <!-- Sticky Header -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-logo">AI</div>
+        <div class="brand-titles">
+          <h1>
+            <span id="projectTitleDisplay">小組報告進度追蹤平台</span>
+            <span class="private-pill" title="已設定 X-Robots-Tag: noindex 且僅限私人網址存取">🔒 私人部署原型</span>
+          </h1>
+          <div class="brand-subtitle" id="projectSubtitleDisplay">
+            AI 專長適性分工 × 難度加權進度追蹤 × 透明化多維度貢獻看板（不以完成件數單一判斷貢獻）
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btnOpenPrivateInfo" class="btn btn-ghost-dark" type="button">
+          🔗 私人網址與存取設定
+        </button>
+        <button id="btnResetDemo" class="btn btn-ghost-dark" type="button">
+          🔄 載入專題範例資料
+        </button>
+        <button id="btnClearEmpty" class="btn btn-ghost-dark" type="button">
+          🧹 清空重填
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Top KPI Overview -->
+    <section class="kpi-grid" aria-label="團隊整體進度與合作指標">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>⚖️ 團隊加權總進度</span>
+          <span style="color: var(--primary);">難度權重×進度</span>
+        </div>
+        <div class="kpi-value" id="kpiWeightedProgress">0%</div>
+        <div class="kpi-sub" id="kpiWeightedPointsSub">已推進 0 / 0 加權點數</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>📋 任務狀態分布</span>
+          <span style="color: var(--success);">非單純件數評量</span>
+        </div>
+        <div class="kpi-value" id="kpiTaskBreakdown">0 / 0</div>
+        <div class="kpi-sub" id="kpiTaskStatusSub">進行中 0・審閱 0・待辦 0</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>⏰ 截止日時程健康度</span>
+          <span id="kpiScheduleTag" style="color: var(--warning);">即時監測</span>
+        </div>
+        <div class="kpi-value" id="kpiScheduleHealth">100%</div>
+        <div class="kpi-sub" id="kpiScheduleSub">0 項即將到期・0 項逾期</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>🤝 加權負載均衡度</span>
+          <span style="color: var(--accent-purple);">AI 適性指標</span>
+        </div>
+        <div class="kpi-value" id="kpiBalanceScore">0%</div>
+        <div class="kpi-sub" id="kpiBalanceSub">組員平均負載 0 點</div>
+      </div>
+    </section>
+
+    <!-- Desktop Workflow Navigation Tabs -->
+    <nav class="workflow-nav" aria-label="專題核心操作流程切換">
+      <button class="step-tab active" data-view="all" type="button">
+        <span class="step-num">★</span> 全景工作台 (All-in-One)
+      </button>
+      <button class="step-tab" data-view="members" type="button">
+        <span class="step-num">1</span> 組員專長與偏好
+      </button>
+      <button class="step-tab" data-view="ai" type="button">
+        <span class="step-num">2</span> AI 專長適性分工
+      </button>
+      <button class="step-tab" data-view="board" type="button">
+        <span class="step-num">3</span> 任務進度與透明看板
+      </button>
+      <button class="step-tab" data-view="analytics" type="button">
+        <span class="step-num">4</span> 多維度貢獻分析
+      </button>
+    </nav>
+
+    <!-- STEP 1: Team Members & Skills / Preferences -->
+    <section id="sectionMembers" class="section-card" data-section="members">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <span>① 組員專長、偏好與目標負載設定</span>
+          </h2>
+          <p class="section-desc">
+            輸入組員的核心專長標籤、喜好任務類型與希望避免項目，作為 AI 適性配對與加權負載平衡的計算依據。
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button id="btnAddMember" class="btn btn-primary" type="button">
+            ➕ 新增組員與專長
+          </button>
+        </div>
+      </div>
+
+      <div id="membersGrid" class="members-grid"></div>
+    </section>
+
+    <!-- STEP 2: AI Adaptive Task Allocation Engine -->
+    <section id="sectionAI" class="section-card" data-section="ai">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <span>② AI 專長適性分工建議（支援手動微調與即時負載預覽）</span>
+          </h2>
+          <p class="section-desc">
+            綜合「任務所需專長契合度 (55%)」、「組員個人偏好 (20%)」與「任務難度加權負載平衡 (25%)」自動推算最佳負責人與協作夥伴。
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button id="btnAddTaskFromAI" class="btn btn-outline" type="button">
+            ➕ 新增不同難度任務
+          </button>
+          <button id="btnRunAISuggest" class="btn btn-purple" type="button">
+            ✨ 產生 AI 適性分工建議
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Engine Mode Selector (Built-in vs Gemini API) -->
+      <div class="ai-engine-bar">
+        <div style="flex: 1; min-width: 260px;">
+          <div style="font-weight: 700; font-size: 0.92rem; color: #1e1b4b; margin-bottom: 4px;">
+            🧠 AI 配對引擎模式切換
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: 0.84rem;">
+            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600;">
+              <input type="radio" name="aiEngineMode" value="builtin" checked />
+              內建多維度智慧配對引擎（推薦，免 API Key 即時試算）
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600;">
+              <input type="radio" name="aiEngineMode" value="gemini" />
+              串接 Gemini API（真實大型語言模型生成）
+            </label>
+          </div>
+        </div>
+
+        <div id="geminiKeyBox" style="display: none; flex: 1; min-width: 260px;">
+          <label class="form-label" for="geminiApiKeyInput" style="font-size: 0.78rem; margin-bottom: 3px;">
+            Gemini API Key（僅保存在您的瀏覽器記憶體中，若未填自動切換內建引擎）
+          </label>
+          <input
+            id="geminiApiKeyInput"
+            type="password"
+            class="form-input"
+            placeholder="AIzaSy... 輸入您的 Gemini API Key"
+            style="padding: 6px 10px; font-size: 0.82rem;"
+          />
+        </div>
+      </div>
+
+      <!-- Interactive AI Suggestions Container -->
+      <div id="aiSuggestionsContainer" style="display: none;">
+        <div
+          style="
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 10px;
+              margin-bottom: 10px;
+            "
+          >
+            <div>
+              <strong style="font-size: 0.94rem; color: var(--primary);" id="aiResultBannerTitle">
+                📊 AI 分工建議預覽與組員加權負載模擬
+              </strong>
+              <p style="font-size: 0.78rem; color: var(--text-secondary);">
+                您可在下方直接調整任一任務的「擬指派負責人」，上方模擬負載條會即時更新！確認無誤後點擊「套用勾選建議」。
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button id="btnApplySelectedAI" class="btn btn-success" type="button">
+                ✅ 套用已勾選的分工建議
+              </button>
+              <button id="btnCloseAIPanel" class="btn btn-outline btn-sm" type="button">
+                收合面板
+              </button>
+            </div>
+          </div>
+
+          <!-- Simulated Workload Balance Preview Bars -->
+          <div id="aiSimulatedLoadBars" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;"></div>
+        </div>
+
+        <div id="aiSuggestionsList"></div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Transparent Task Progress Board -->
+    <section id="sectionBoard" class="section-card" data-section="board">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <span>③ 任務進度追蹤與透明化進度看板</span>
+          </h2>
+          <p class="section-desc">
+            清楚呈現每項任務的<strong>難度權重（低1x / 中2x / 高3x）</strong>、<strong>目前進度百分比</strong>、<strong>截止日時程狀態</strong>與<strong>AI 配對理由</strong>。可直接拉動滑桿或切換狀態！
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <select id="filterMemberSelect" class="compact-select" style="width: auto; min-width: 135px; padding: 7px 10px;">
+            <option value="all">👤 篩選：全部組員</option>
+          </select>
+          <select id="filterDifficultySelect" class="compact-select" style="width: auto; min-width: 135px; padding: 7px 10px;">
+            <option value="all">⚡ 篩選：全部難度</option>
+            <option value="high">🔥 高難度 (3x / 30點)</option>
+            <option value="medium">⚡ 中難度 (2x / 20點)</option>
+            <option value="low">🌱 低難度 (1x / 10點)</option>
+          </select>
+          <button id="btnAddTask" class="btn btn-primary" type="button">
+            ➕ 新增任務
+          </button>
+        </div>
+      </div>
+
+      <!-- Kanban Columns -->
+      <div class="kanban-grid" id="kanbanBoard">
+        <div class="kanban-col col-todo">
+          <div class="kanban-col-header">
+            <span>📝 待開始 (To Do)</span>
+            <span class="col-count" id="count-todo">0</span>
+          </div>
+          <div id="col-todo-list"></div>
+        </div>
+
+        <div class="kanban-col col-in_progress">
+          <div class="kanban-col-header">
+            <span>🚀 進行中 (In Progress)</span>
+            <span class="col-count" id="count-in_progress">0</span>
+          </div>
+          <div id="col-in_progress-list"></div>
+        </div>
+
+        <div class="kanban-col col-review">
+          <div class="kanban-col-header">
+            <span>🔍 審閱與整合 (Review)</span>
+            <span class="col-count" id="count-review">0</span>
+          </div>
+          <div id="col-review-list"></div>
+        </div>
+
+        <div class="kanban-col col-done">
+          <div class="kanban-col-header">
+            <span>✅ 已完成 (Done)</span>
+            <span class="col-count" id="count-done">0</span>
+          </div>
+          <div id="col-done-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: Multi-Dimensional Contribution Analytics (Beyond Simple Task Counts!) -->
+    <section id="sectionAnalytics" class="section-card" data-section="analytics">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">
+            <span>④ 多維度合作與貢獻透明化分析（拒絕只以「完成件數」評斷貢獻）</span>
+          </h2>
+          <p class="section-desc">
+            傳統小組報告若只看「完成件數」，會讓負責<strong>高難度核心任務（3x 權重、耗時長、進行中 80%）</strong>的組員在期中看似「完成 0 件」，而只做 2 件簡單任務（1x）卻看似貢獻最多。本看板綜合<strong>難度權重 × 實際進度百分比 + 協作支援 + 時程準時度</strong>真實呈現每人的投入！
+          </p>
+        </div>
+      </div>
+
+      <!-- Dynamic Fairness Insight Callout -->
+      <div id="fairnessInsightBox" class="insight-callout"></div>
+
+      <!-- Member Multi-Dimensional Contribution Cards -->
+      <div id="contribAnalyticsGrid" class="contrib-grid"></div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav" aria-label="手機版底部快速導覽">
+    <div class="mobile-nav-grid">
+      <button class="mobile-nav-btn active" data-view="all" type="button">
+        <span>🏠</span>
+        <span>全景</span>
+      </button>
+      <button class="mobile-nav-btn" data-view="members" type="button">
+        <span>👥</span>
+        <span>組員專長</span>
+      </button>
+      <button class="mobile-nav-btn" data-view="ai" type="button">
+        <span>✨</span>
+        <span>AI 分工</span>
+      </button>
+      <button class="mobile-nav-btn" data-view="board" type="button">
+        <span>📋</span>
+        <span>進度看板</span>
+      </button>
+      <button class="mobile-nav-btn" data-view="analytics" type="button">
+        <span>⚖️</span>
+        <span>多維貢獻</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MODAL 1: Add / Edit Member -->
+  <div id="memberModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="memberModalTitle">
+    <div class="modal-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 id="memberModalTitle" style="font-size: 1.1rem; font-weight: 700;">新增組員專長與偏好</h3>
+        <button id="btnCloseMemberModal" class="btn btn-outline btn-sm" type="button">✕</button>
+      </div>
+
+      <form id="memberForm">
+        <input type="hidden" id="memberIdInput" />
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="memberNameInput">組員姓名 *</label>
+            <input id="memberNameInput" class="form-input" type="text" required placeholder="例如：王小明" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="memberRoleInput">團隊定位 / 角色</label>
+            <input id="memberRoleInput" class="form-input" type="text" placeholder="例如：資料分析 / 簡報設計" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="memberSkillsInput">核心專長（以逗號分隔，或點擊下方常用標籤快速帶入）*</label>
+          <input
+            id="memberSkillsInput"
+            class="form-input"
+            type="text"
+            required
+            placeholder="例如：系統程式開發, 數據分析與圖表"
+          />
+          <div class="quick-chips" id="quickSkillChips"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="memberPrefsInput">個人偏好任務類型（以逗號分隔，AI 配對將給予加分）</label>
+          <input
+            id="memberPrefsInput"
+            class="form-input"
+            type="text"
+            placeholder="例如：原型設計, 問卷統計分析"
+          />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="memberAvoidInput">較不擅長 / 希望避免項目（選填）</label>
+            <input id="memberAvoidInput" class="form-input" type="text" placeholder="例如：上台口頭報告" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="memberCapacityInput">目標負載點數上限</label>
+            <input id="memberCapacityInput" class="form-input" type="number" min="20" max="150" step="10" value="60" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="memberNoteInput">補充說明（選填）</label>
+          <input id="memberNoteInput" class="form-input" type="text" placeholder="例如：週三晚上有社團，適合非同步開發任務" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+          <button type="button" id="btnCancelMember" class="btn btn-outline">取消</button>
+          <button type="submit" id="btnSaveMember" class="btn btn-primary">💾 儲存組員資料</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Add / Edit Task -->
+  <div id="taskModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="modal-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 id="taskModalTitle" style="font-size: 1.1rem; font-weight: 700;">建立 / 編輯專題任務</h3>
+        <button id="btnCloseTaskModal" class="btn btn-outline btn-sm" type="button">✕</button>
+      </div>
+
+      <form id="taskForm">
+        <input type="hidden" id="taskIdInput" />
+        <div class="form-group">
+          <label class="form-label" for="taskTitleInput">任務名稱 *</label>
+          <input id="taskTitleInput" class="form-input" type="text" required placeholder="例如：專題系統資料庫設計與 API 實作" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="taskDescInput">任務具體交付內容說明</label>
+          <textarea id="taskDescInput" class="form-textarea" rows="2" placeholder="簡述任務驗收標準與產出物..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="taskDifficultyInput">任務難度與貢獻權重 *</label>
+            <select id="taskDifficultyInput" class="form-select">
+              <option value="low">🌱 低難度 (1x 權重 / 10 點)</option>
+              <option value="medium" selected>⚡ 中難度 (2x 權重 / 20 點)</option>
+              <option value="high">🔥 高難度 (3x 權重 / 30 點)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="taskDueDateInput">截止日期 *</label>
+            <input id="taskDueDateInput" class="form-input" type="date" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="taskReqSkillsInput">任務所需專長標籤（以逗號分隔，供 AI 配對分析）*</label>
+          <input
+            id="taskReqSkillsInput"
+            class="form-input"
+            type="text"
+            required
+            placeholder="例如：系統程式開發, UI/UX 與視覺設計"
+          />
+          <div class="quick-chips" id="quickTaskSkillChips"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="taskStatusInput">目前狀態</label>
+            <select id="taskStatusInput" class="form-select">
+              <option value="todo">📝 待開始 (To Do)</option>
+              <option value="in_progress">🚀 進行中 (In Progress)</option>
+              <option value="review">🔍 審閱與整合 (Review)</option>
+              <option value="done">✅ 已完成 (Done)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="taskProgressInput">目前完成進度 (<span id="taskModalProgressVal">0</span>%)</label>
+            <input id="taskProgressInput" class="form-input" type="range" min="0" max="100" step="5" value="0" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label class="form-label" for="taskAssigneeInput">主要負責人（可留白交由 AI 推薦）</label>
+            <select id="taskAssigneeInput" class="form-select"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="taskCollabInput">協作支援組員（選填，計 0.25x 協作貢獻）</label>
+            <select id="taskCollabInput" class="form-select"></select>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+          <button type="button" id="btnCancelTask" class="btn btn-outline">取消</button>
+          <button type="submit" id="btnSaveTask" class="btn btn-primary">💾 儲存任務</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Private Deployment & Access Settings -->
+  <div id="privateInfoModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">🔒 私人部署與組內私密存取設定</h3>
+        <button id="btnClosePrivateModal" class="btn btn-outline btn-sm" type="button">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 14px;">
+        本系統以<strong>私人方式部署於本機與區域網路伺服器</strong>，並已自動加上 <code>X-Robots-Tag: noindex, nofollow</code> 與禁止爬蟲設定，不會公開發布至外部搜尋引擎。
+      </p>
+
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-bottom: 14px; font-size: 0.84rem;">
+        <div style="font-weight: 700; margin-bottom: 6px;">📌 您的專屬私密操作網址：</div>
+        <div style="margin-bottom: 6px;">
+          <strong>電腦本機網址：</strong>
+          <code id="localUrlDisplay" style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">http://localhost:8088/?token=team2026</code>
+        </div>
+        <div>
+          <strong>手機 / 同區網裝置網址：</strong>
+          <code id="lanUrlDisplay" style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">http://192.168.103.2:8088/?token=team2026</code>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer;">
+          <input type="checkbox" id="toggleRequirePasscode" />
+          啟用進入頁面通行碼鎖定（未帶 <code>?token=team2026</code> 參數時需輸入通行碼）
+        </label>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button type="button" id="btnSavePrivateSettings" class="btn btn-primary">完成設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
